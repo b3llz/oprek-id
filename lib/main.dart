@@ -14,7 +14,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) {
           final provider = AppProvider();
-          provider.selectMotor(SeedMotors.popularMotors[0], 12000.0);
+          provider.selectMotor(SeedMotors.popularMotors[0], 12000.0); // Default BeAT FI
           return provider;
         }),
         ChangeNotifierProvider(create: (_) => AiProvider()),
