@@ -25,14 +25,12 @@ jobs:
 
       - name: Generate Android Chassis (Aman)
         run: |
-          # Amankan file asli kita
           cp pubspec.yaml pubspec_aman.yaml
-          cp lib/main.dart main_aman.dart
-          # Bikin folder android
+          cp -r lib lib_aman
           flutter create --org id.oprek --project-name oprek_id --platforms=android .
-          # Kembalikan file asli kita
           mv pubspec_aman.yaml pubspec.yaml
-          mv main_aman.dart lib/main.dart
+          rm -rf lib
+          mv lib_aman lib
 
       - name: Get Dependencies
         run: flutter pub get
