@@ -1,18 +1,73 @@
-# This .gitignore is appropriate for repositories deployed to GitHub Pages and using
-# a Gemfile as specified at https://github.com/github/pages-gem#conventional
-
-# Basic Jekyll gitignores (synchronize to Jekyll.gitignore)
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-
-# Additional Ruby/bundler ignore for when you run: bundle install
-/vendor
-
-# Specific ignore for GitHub Pages
-# GitHub Pages will always use its own deployed version of pages-gem
-# This means GitHub Pages will NOT use your Gemfile.lock and therefore it is
-# counterproductive to check this file into the repository.
-# Details at https://github.com/github/pages-gem/issues/768
-Gemfile.lock
+Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+The .vscode folder contains a variety of workspace settings and tasks
+.vscode/
+Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+/coverage/
+Android related
+/android//gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/android/app/key.properties
+*.keystore
+*.jks
+iOS/XCode related
+/ios//.mode1v3
+/ios//.mode2v3
+/ios//.pbxuser
+/ios//.perspectivev3
+/ios//*.xcuserstate
+**/ios/.generated/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Runner/GeneratedPluginRegistrant.h
+**/ios/Runner/GeneratedPluginRegistrant.m
+**/ios/Pods/
+Web related
+**/web/build/
+macOS
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+Windows
+**/windows/flutter/ephemeral/
+**/windows/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugins.cmake
+Linux
+**/linux/flutter/ephemeral/
+**/linux/flutter/generated_plugin_registrant.cc
+**/linux/flutter/generated_plugins.cmake
