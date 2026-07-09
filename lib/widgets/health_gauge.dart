@@ -1,84 +1,64 @@
-import 'package:flutter/foundation.dart';
-import '../models/motor_model.dart';
-import '../models/component_model.dart';
-import '../data/seed_components.dart';
+import 'package:flutter/material.dart';
+import '../core/constants/app_colors.dart';
 
-class AppProvider with ChangeNotifier {
-  MotorModel? _currentMotor;
-  double _currentOdo = 0.0;
-  List<MotorComponent> _activeComponents = [];
+class HealthGauge extends StatelessWidget {
+  final double percentage;
+  final double size;
 
-  // Getter
-  MotorModel? get currentMotor => _currentMotor;
-  double get currentOdo => _currentOdo;
-  List<MotorComponent> get activeComponents => _activeComponents;
+  const HealthGauge({
+    Key? key,
+    required this.percentage,
+    this.size = 60.0,
+  }) : super(key: key);
 
-  // --- AKSI PENGGUNA ---
-
-  /// Set motor baru dan inisialisasi komponen defaultnya
-  void selectMotor(MotorModel motor, double startingOdo) {
-    _currentMotor = motor;
-    _currentOdo = startingOdo;
-    
-    // Inisialisasi komponen standar (Kita pakai contoh Oli & Kampas Rem dulu)
-    // Nanti bisa diextend jadi 11 sistem.
-    _activeComponents = [
-      MotorComponent(
-        id: "oli_mesin_1",
-        name: "Oli Mesin",
-        category: "Mesin",
-        // Ambil base life dari AHM MPX-2 sebagai standar awal
-        baseLifeKm: SeedComponents.engineOils[0].baseLifeKm,
-        maxMonths: SeedComponents.engineOils[0].maxMonths,
-      ),
-      MotorComponent(
-        id: "kampas_rem_depan",
-        name: "Kampas Rem Depan",
-        category: "Pengereman",
-        // Ambil base life dari OEM standar
-        baseLifeKm: SeedComponents.brakePads[0].baseLifeKm,
-        isExposedToWater: true, // Kampas rem kena cipratan air/banjir
-      ),
-      // Tambahkan V-Belt khusus jika motornya Matic
-      if (motor.type == 'Matic')
-        MotorComponent(
-          id: "vbelt_1",
-          name: "V-Belt CVT",
-          category: "Transmisi",
-          baseLifeKm: SeedComponents.vBelts[0].baseLifeKm,
-          maxMonths: SeedComponents.vBelts[0].maxMonths,
-        ),
-    ];
-    
-    notifyListeners(); // Beritahu UI untuk update
+  Color _getStatusColor() {
+    if (percentage > 40) return AppColors.statusHealthy;
+    if (percentage > 15) return AppColors.statusWarning;
+    return AppColors.statusCritical;
   }
 
-  /// Update ODO tanpa mengubah umur komponen (misal cuma kalibrasi)
-  void updateOdoOnly(double newOdo) {
-    if (newOdo > _currentOdo) {
-      _currentOdo = newOdo;
-      notifyListeners();
-    }
-  }
-
-  /// Fungsi Ganti Komponen (User baru saja ganti oli / sparepart)
-  void replaceComponent(String componentId, double newBaseLife, int newMaxMonths) {
-    final index = _activeComponents.indexWhere((c) => c.id == componentId);
-    if (index != -1) {
-      // Kita buat ulang komponennya dengan spek baru dan nol-kan KM efektifnya
-      final old = _activeComponents[index];
-      _activeComponents[index] = MotorComponent(
-        id: old.id,
-        name: old.name,
-        category: old.category,
-        baseLifeKm: newBaseLife, // Spek dari merek baru
-        maxMonths: newMaxMonths, // Spek dari merek baru
-        isExposedToWater: old.isExposedToWater,
-        totalEffectiveKm: 0.0, // Mulai dari nol lagi!
-        lastChangedDate: DateTime.now(),
-      );
-      notifyListeners();
-    }
+  @override
+  Widget build(BuildContext context) {
+    final color = _getStatusColor();
+    
+    return SizedBox(
+      width: size,
+      height: size,
+      child: TweenAnimationBuilder<double>(
+        tween: Tween<double>(begin: 0, end: percentage / 100),
+        duration: const Duration(milliseconds: 1500),
+        curve: Curves.easeOutCubic,
+        builder: (context, value, child) {
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              CircularProgressIndicator(
+                value: 1.0,
+                strokeWidth: 6.0,
+                color: AppColors.background,
+              ),
+              CircularProgressIndicator(
+                value: value,
+                strokeWidth: 6.0,
+                backgroundColor: Colors.transparent,
+                color: color,
+                strokeCap: StrokeCap.round,
+              ),
+              Center(
+                child: Text(
+                  '${(value * 100).toInt()}%',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                    fontSize: size * 0.25,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 }
 
