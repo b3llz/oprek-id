@@ -4,15 +4,14 @@ import '../../providers/app_provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../widgets/health_gauge.dart';
 import '../../models/component_model.dart';
-// TODO: Nanti import fitur harian di sini
-// import '../daily_check/daily_check_screen.dart'; 
+// IMPORT HALAMAN DETAIL
+import '../component/component_detail_screen.dart'; 
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Kita panggil mekanik utama (Provider)
     final provider = Provider.of<AppProvider>(context);
     final components = provider.activeComponents;
     final motor = provider.currentMotor;
@@ -39,11 +38,9 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          // Tombol Cek Harian
           IconButton(
             icon: const Icon(Icons.add_road, color: AppColors.textMain),
             onPressed: () {
-              // Nanti kita arahkan ke halaman input ODO & Cuaca
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Fitur Cek Harian (Modul 5 lanjutan)')),
               );
@@ -54,7 +51,7 @@ class HomeScreen extends StatelessWidget {
       body: components.isEmpty
           ? Center(
               child: Text(
-                'Belum ada motor yang dipilih.\nMasuk menu Setup (Modul berikutnya)',
+                'Belum ada motor yang dipilih.\nMasuk menu Setup',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
@@ -74,22 +71,29 @@ class HomeScreen extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       child: InkWell(
-        borderRadius: BorderRadius.circular(20), // Sesuai dengan AppTheme
+        borderRadius: BorderRadius.circular(20),
         onTap: () {
-          // Nanti buka halaman detail komponen (rekomendasi merek, dll)
+          // --- NAVIGASI KE DETAIL SAAT DITAP ---
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ComponentDetailScreen(component: comp),
+            ),
+          );
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              // Gauge Kesehatan
-              HealthGauge(
-                percentage: comp.healthPercentage,
-                size: 70.0,
+              // Bungkus dengan Hero supaya animasinya nyambung
+              Hero(
+                tag: 'gauge_${comp.id}',
+                child: HealthGauge(
+                  percentage: comp.healthPercentage,
+                  size: 70.0,
+                ),
               ),
               const SizedBox(width: 16.0),
-              
-              // Info Teks
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,13 +113,11 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    // Pesan Status (Aman, Waspada, Kritis)
                     Text(
                       comp.statusMessage,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 12,
                         fontStyle: FontStyle.italic,
-                        // Warnanya ikut status juga biar jelas
                         color: comp.healthPercentage > 40 
                             ? AppColors.statusHealthy 
                             : (comp.healthPercentage > 15 ? AppColors.statusWarning : AppColors.statusCritical),
@@ -124,8 +126,6 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              
-              // Ikon Panah Kanan
               const Icon(
                 Icons.chevron_right,
                 color: AppColors.textSecondary,
