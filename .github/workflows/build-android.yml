@@ -23,8 +23,16 @@ jobs:
           flutter-version: '3.22.2'
           channel: 'stable'
 
-      - name: Generate Android Chassis
-        run: flutter create --org id.oprek --project-name oprek_id --platforms=android .
+      - name: Generate Android Chassis (Aman)
+        run: |
+          # Amankan file asli kita
+          cp pubspec.yaml pubspec_aman.yaml
+          cp lib/main.dart main_aman.dart
+          # Bikin folder android
+          flutter create --org id.oprek --project-name oprek_id --platforms=android .
+          # Kembalikan file asli kita
+          mv pubspec_aman.yaml pubspec.yaml
+          mv main_aman.dart lib/main.dart
 
       - name: Get Dependencies
         run: flutter pub get
