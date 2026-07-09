@@ -15,14 +15,19 @@ class AppTheme {
         background: AppColors.background,
       ),
       textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme).copyWith(
-        displayLarge: GoogleFonts.spaceGrotesk(color: AppColors.textMain, fontWeight: FontWeight.bold),
+        displayLarge: GoogleFonts.spaceGrotesk(
+          color: AppColors.textMain, 
+          fontWeight: FontWeight.bold,
+        ),
         bodyLarge: GoogleFonts.outfit(color: AppColors.textMain),
         bodyMedium: GoogleFonts.outfit(color: AppColors.textSecondary),
       ),
       cardTheme: CardTheme(
         color: AppColors.surface,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.background,
