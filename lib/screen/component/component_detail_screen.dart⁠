@@ -1,1 +1,55 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/component_model.dart';
+import '../../providers/app_provider.dart';
+import '../../data/seed_components.dart';
+import '../../widgets/health_gauge.dart';
+import '../../widgets/brand_recommendation_card.dart';
+import '../../core/constants/app_colors.dart';
+
+class ComponentDetailScreen extends StatelessWidget {
+  final MotorComponent component;
+  const ComponentDetailScreen({Key? key, required this.component}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final recommendations = SeedComponents.getAllBrands().where((b) => b.componentType == component.name).toList();
+    
+    return Scaffold(
+      appBar: AppBar(title: Text(component.name)),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const SizedBox(height: 10),
+          Center(child: HealthGauge(percentage: component.healthPercentage, size: 140)),
+          const SizedBox(height: 20),
+          Center(
+            child: Text(
+              'Jarak Tempuh Efektif: ${component.totalEffectiveKm.toStringAsFixed(1)} / ${component.baseLifeKm.toInt()} KM',
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+            ),
+          ),
+          const Divider(height: 40, color: AppColors.surface),
+          const Text('Rekomendasi Suku Cadang & Oli', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textMain)),
+          const SizedBox(height: 12),
+          if (recommendations.isEmpty)
+            const Text('Belum ada database spesifikasi merek untuk komponen ini.', style: TextStyle(color: AppColors.textSecondary))
+          else
+            ...recommendations.map((brand) => BrandRecommendationCard(
+              brand: brand,
+              onSelect: () {
+                Provider.of<AppProvider>(context, listen: false).replaceComponent(component.id, brand.baseLifeKm, brand.maxMonths);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Berhasil ganti ke ${brand.brandName}! Data degradasi di-reset.'), backgroundColor: AppColors.statusHealthy)
+                );
+              },
+            )),
+        ],
+      ),
+    );
+  }
+}
+
+
 
