@@ -23,8 +23,10 @@ jobs:
           flutter-version: '3.22.2'
           channel: 'stable'
 
-      - name: Generate Android Chassis
-        run: flutter create --org id.oprek --platforms=android .
+          - name: Generate Android Chassis
+        # Tambahkan --project-name supaya tidak bentrok dengan nama folder
+        run: flutter create --org id.oprek --project-name oprek_id --platforms=android .
+
 
       - name: Get Dependencies
         run: flutter pub get
