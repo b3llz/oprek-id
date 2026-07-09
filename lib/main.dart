@@ -1,49 +1,40 @@
-name: Build Android Release
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-on:
-  workflow_dispatch:
+import 'core/constants/app_theme.dart';
+import 'providers/app_provider.dart';
+import 'providers/ai_provider.dart';
+import 'screens/home/home_screen.dart';
+import 'data/seed_motors.dart';
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) {
+          final provider = AppProvider();
+          provider.selectMotor(SeedMotors.popularMotors[0], 12000.0);
+          return provider;
+        }),
+        ChangeNotifierProvider(create: (_) => AiProvider()),
+      ],
+      child: const OprekIdApp(),
+    ),
+  );
+}
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.22.2'
-          channel: 'stable'
-
-      - name: Generate Android Chassis (Aman)
-        run: |
-          # Amankan file asli kita
-          cp pubspec.yaml pubspec_aman.yaml
-          cp lib/main.dart main_aman.dart
-          # Bikin folder android
-          flutter create --org id.oprek --project-name oprek_id --platforms=android .
-          # Kembalikan file asli kita
-          mv pubspec_aman.yaml pubspec.yaml
-          mv main_aman.dart lib/main.dart
-
-      - name: Get Dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: oprek-id-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+class OprekIdApp extends StatelessWidget {
+  const OprekIdApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Oprek.ID',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.darkTheme,
+      home: const HomeScreen(),
+    );
+  }
+}
 
 
