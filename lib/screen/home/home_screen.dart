@@ -4,8 +4,9 @@ import '../../providers/app_provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../widgets/health_gauge.dart';
 import '../../models/component_model.dart';
-// IMPORT HALAMAN DETAIL
 import '../component/component_detail_screen.dart'; 
+// IMPORT HALAMAN BARU
+import '../daily_check/daily_check_screen.dart'; 
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class HomeScreen extends StatelessWidget {
             ),
             if (motor != null)
               Text(
-                '${motor.brand} ${motor.name}',
+                '${motor.brand} ${motor.name} • ODO: ${provider.currentOdo.toInt()} KM',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 12,
                   color: AppColors.electricTeal,
@@ -41,8 +42,12 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add_road, color: AppColors.textMain),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fitur Cek Harian (Modul 5 lanjutan)')),
+              // --- BUKA HALAMAN CEK HARIAN ---
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const DailyCheckScreen(),
+                ),
               );
             },
           )
@@ -51,7 +56,7 @@ class HomeScreen extends StatelessWidget {
       body: components.isEmpty
           ? Center(
               child: Text(
-                'Belum ada motor yang dipilih.\nMasuk menu Setup',
+                'Belum ada motor yang dipilih.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
@@ -73,7 +78,6 @@ class HomeScreen extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: () {
-          // --- NAVIGASI KE DETAIL SAAT DITAP ---
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -85,7 +89,6 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              // Bungkus dengan Hero supaya animasinya nyambung
               Hero(
                 tag: 'gauge_${comp.id}',
                 child: HealthGauge(
