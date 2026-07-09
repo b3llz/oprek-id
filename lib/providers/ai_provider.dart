@@ -2,11 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../core/constants/api_keys.dart';
 
-// Model sederhana untuk pesan chat
 class ChatMessage {
   final String text;
   final bool isUser;
-
   ChatMessage({required this.text, required this.isUser});
 }
 
@@ -17,11 +15,8 @@ class AiProvider with ChangeNotifier {
   List<ChatMessage> get messages => _messages;
   bool get isLoading => _isLoading;
 
-  // Fungsi utama untuk ngirim pesan
   Future<void> sendMessage(String message, String motorContext) async {
     if (message.trim().isEmpty) return;
-
-    // Tambahkan pesan user ke layar
     _messages.add(ChatMessage(text: message, isUser: true));
     _isLoading = true;
     notifyListeners();
@@ -30,26 +25,18 @@ class AiProvider with ChangeNotifier {
       final model = GenerativeModel(
         model: 'gemini-1.5-flash',
         apiKey: ApiKeys.geminiApiKey,
-        // Sistem Prompt (Mendoktrin AI agar bertingkah seperti mekanik)
         systemInstruction: Content.system(
-          "Kamu adalah 'Bang Mekanik', montir bengkel motor senior di Indonesia yang sangat ahli dan teliti. "
-          "Gaya bahasamu asik, ramah, pakai bahasa gaul mekanik (panggil bosku, ngab, dsb), tapi tetap profesional dan akurat secara teknis. "
-          "Jangan jawab terlalu panjang seperti robot, langsung to the point. "
-          "Berikut adalah data motor user saat ini yang wajib kamu jadikan acuan:\n\n$motorContext"
+          "Kamu adalah 'Bang Mekanik', ahli mesin senior Indonesia berwawasan luas dengan pengalaman 30 tahun. "
+          "Gaya bicaramu asik, pakai istilah perbengkelan lokal (bosku, kirian, peyang, slip, ngempos), "
+          "tapi analisis motormu sangat tajam, solutif, dan mendalam. Berikan jawaban padat dan mantap. "
+          "Gunakan konteks motor user berikut untuk mendiagnosa:\n$motorContext"
         ),
       );
-
-      // Gabungkan sejarah chat agar AI ingat percakapan sebelumnya
-      final chat = model.startChat(history: _messages.map((m) {
-        return Content(m.isUser ? 'user' : 'model', [TextPart(m.text)]);
-      }).toList());
-
+      final chat = model.startChat(history: _messages.map((m) => Content(m.isUser ? 'user' : 'model', [TextPart(m.text)])).toList());
       final response = await chat.sendMessage(Content.text(message));
-      final aiResponseText = response.text ?? "Waduh bosku, kunci inggris saya ketinggalan nih. Coba tanya lagi ya.";
-
-      _messages.add(ChatMessage(text: aiResponseText, isUser: false));
+      _messages.add(ChatMessage(text: response.text ?? "Gagal koneksi ke bengkel AI.", isUser: false));
     } catch (e) {
-      _messages.add(ChatMessage(text: "Waduh server bengkel lagi gangguan nih. Pastikan internet jalan dan API Key valid ya bosku. (Error: $e)", isUser: false));
+      _messages.add(ChatMessage(text: "Kunci inggris mekanik AI patah nih bosku. Cek lagi konfigurasi API Key kamu. ($e)", isUser: false));
     } finally {
       _isLoading = false;
       notifyListeners();
