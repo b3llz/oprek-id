@@ -8,8 +8,12 @@ class ComponentBrand {
   final String educationalNote;
 
   const ComponentBrand({
-    required this.brandName, required this.productName, required this.componentType,
-    required this.baseLifeKm, this.maxMonths = 0, required this.materialType,
+    required this.brandName,
+    required this.productName,
+    required this.componentType,
+    required this.baseLifeKm,
+    this.maxMonths = 0,
+    required this.materialType,
     required this.educationalNote,
   });
 }
